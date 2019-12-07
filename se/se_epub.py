@@ -103,8 +103,8 @@ class SeEpub:
 			with open(self.metadata_file_path, "r", encoding="utf-8") as file:
 				self.metadata_xhtml = file.read()
 
-			if "<dc:identifier id=\"uid\">url:https://standardebooks.org/ebooks/" not in self.metadata_xhtml:
-				raise se.InvalidSeEbookException
+			# if "<dc:identifier id=\"uid\">url:https://standardebooks.org/ebooks/" not in self.metadata_xhtml:
+			# 	raise se.InvalidSeEbookException
 		except:
 			raise se.InvalidSeEbookException("Not a Standard Ebooks source directory: {}".format(self.path))
 
