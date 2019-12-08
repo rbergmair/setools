@@ -282,14 +282,14 @@ def lint(self, metadata_xhtml) -> list:
 	if "<![CDATA[" in metadata_xhtml:
 		messages.append(LintMessage("<![CDATA[ detected. Run `clean` to canonicalize <![CDATA[ sections.", se.MESSAGE_TYPE_ERROR, "content.opf"))
 
-	# Check that our provided identifier matches the generated identifier
-	identifier = regex.sub(r"<.+?>", "", regex.findall(r"<dc:identifier id=\"uid\">.+?</dc:identifier>", metadata_xhtml)[0])
-	if identifier != self.generated_identifier:
-		messages.append(LintMessage("<dc:identifier> does not match expected: {}".format(self.generated_identifier), se.MESSAGE_TYPE_ERROR, "content.opf"))
+	# # Check that our provided identifier matches the generated identifier
+	# identifier = regex.sub(r"<.+?>", "", regex.findall(r"<dc:identifier id=\"uid\">.+?</dc:identifier>", metadata_xhtml)[0])
+	# if identifier != self.generated_identifier:
+	# 	messages.append(LintMessage("<dc:identifier> does not match expected: {}".format(self.generated_identifier), se.MESSAGE_TYPE_ERROR, "content.opf"))
 
-	# Check that the GitHub repo URL is as expected
-	if ("<meta property=\"se:url.vcs.github\">" + self.generated_github_repo_url + "</meta>") not in metadata_xhtml:
-		messages.append(LintMessage("GitHub repo URL does not match expected: {}".format(self.generated_github_repo_url), se.MESSAGE_TYPE_ERROR, "content.opf"))
+	# # Check that the GitHub repo URL is as expected
+	# if ("<meta property=\"se:url.vcs.github\">" + self.generated_github_repo_url + "</meta>") not in metadata_xhtml:
+	# 	messages.append(LintMessage("GitHub repo URL does not match expected: {}".format(self.generated_github_repo_url), se.MESSAGE_TYPE_ERROR, "content.opf"))
 
 	# Check if se:name.person.full-name matches their titlepage name
 	matches = regex.findall(r"<meta property=\"se:name\.person\.full-name\" refines=\"#([^\"]+?)\">([^<]*?)</meta>", metadata_xhtml)
@@ -321,21 +321,21 @@ def lint(self, metadata_xhtml) -> list:
 		if manifest != expected_manifest:
 			messages.append(LintMessage("<manifest> does not match expected structure.", se.MESSAGE_TYPE_ERROR, "content.opf"))
 
-	# Make sure some static files are unchanged
-	try:
-		if not filecmp.cmp(license_file_path, self.path / "LICENSE.md"):
-			messages.append(LintMessage("LICENSE.md does not match {}".format(license_file_path), se.MESSAGE_TYPE_ERROR, "LICENSE.md"))
-	except Exception:
-		messages.append(LintMessage("Missing ./LICENSE.md", se.MESSAGE_TYPE_ERROR, "LICENSE.md"))
-
-	if not filecmp.cmp(core_css_file_path, self.path / "src" / "epub" / "css" / "core.css"):
-		messages.append(LintMessage("core.css does not match {}".format(core_css_file_path), se.MESSAGE_TYPE_ERROR, "core.css"))
-
-	if not filecmp.cmp(logo_svg_file_path, self.path / "src" / "epub" / "images" / "logo.svg"):
-		messages.append(LintMessage("logo.svg does not match {}".format(logo_svg_file_path), se.MESSAGE_TYPE_ERROR, "logo.svg"))
-
-	if not filecmp.cmp(uncopyright_file_path, self.path / "src" / "epub" / "text" / "uncopyright.xhtml"):
-		messages.append(LintMessage("uncopyright.xhtml does not match {}".format(uncopyright_file_path), se.MESSAGE_TYPE_ERROR, "uncopyright.xhtml"))
+	# # Make sure some static files are unchanged
+	# try:
+	# 	if not filecmp.cmp(license_file_path, self.path / "LICENSE.md"):
+	# 		messages.append(LintMessage("LICENSE.md does not match {}".format(license_file_path), se.MESSAGE_TYPE_ERROR, "LICENSE.md"))
+	# except Exception:
+	# 	messages.append(LintMessage("Missing ./LICENSE.md", se.MESSAGE_TYPE_ERROR, "LICENSE.md"))
+  # 
+	# if not filecmp.cmp(core_css_file_path, self.path / "src" / "epub" / "css" / "core.css"):
+	# 	messages.append(LintMessage("core.css does not match {}".format(core_css_file_path), se.MESSAGE_TYPE_ERROR, "core.css"))
+  # 
+	# if not filecmp.cmp(logo_svg_file_path, self.path / "src" / "epub" / "images" / "logo.svg"):
+	# 	messages.append(LintMessage("logo.svg does not match {}".format(logo_svg_file_path), se.MESSAGE_TYPE_ERROR, "logo.svg"))
+  # 
+	# if not filecmp.cmp(uncopyright_file_path, self.path / "src" / "epub" / "text" / "uncopyright.xhtml"):
+	# 	messages.append(LintMessage("uncopyright.xhtml does not match {}".format(uncopyright_file_path), se.MESSAGE_TYPE_ERROR, "uncopyright.xhtml"))
 
 	# Check for unused selectors
 	unused_selectors = _get_unused_selectors(self)
@@ -639,12 +639,12 @@ def lint(self, metadata_xhtml) -> list:
 					if matches:
 						messages.append(LintMessage("Required nbsp not found before <abbr class=\"time\">", se.MESSAGE_TYPE_WARNING, filename))
 
-					# Check for low-hanging misquoted fruit
-					matches = regex.findall(r"[A-Za-z]+[“‘]", file_contents)
-					if matches:
-						messages.append(LintMessage("Possible mis-curled quotation mark.", se.MESSAGE_TYPE_WARNING, filename))
-						for match in matches:
-							messages.append(LintMessage(match, se.MESSAGE_TYPE_WARNING, filename, True))
+					# # Check for low-hanging misquoted fruit
+					# matches = regex.findall(r"[A-Za-z]+[“‘]", file_contents)
+					# if matches:
+					# 	messages.append(LintMessage("Possible mis-curled quotation mark.", se.MESSAGE_TYPE_WARNING, filename))
+					# 	for match in matches:
+					# 		messages.append(LintMessage(match, se.MESSAGE_TYPE_WARNING, filename, True))
 
 					# Check that times have colons and not periods
 					matches = regex.findall(r"[0-9]\.[0-9]+\s<abbr class=\"time", file_contents) + regex.findall(r"at [0-9]\.[0-9]+", file_contents)
@@ -746,12 +746,12 @@ def lint(self, metadata_xhtml) -> list:
 						for match in matches:
 							messages.append(LintMessage(match, se.MESSAGE_TYPE_WARNING, filename, True))
 
-					# Check for style attributes
-					matches = regex.findall(r"<.+?style=\"", file_contents)
-					if matches:
-						messages.append(LintMessage("Illegal style attribute. Do not use inline styles, any element can be targeted with a clever enough selector.", se.MESSAGE_TYPE_ERROR, filename))
-						for match in matches:
-							messages.append(LintMessage(match, se.MESSAGE_TYPE_ERROR, filename, True))
+					# # Check for style attributes
+					# matches = regex.findall(r"<.+?style=\"", file_contents)
+					# if matches:
+					# 	messages.append(LintMessage("Illegal style attribute. Do not use inline styles, any element can be targeted with a clever enough selector.", se.MESSAGE_TYPE_ERROR, filename))
+					# 	for match in matches:
+					# 		messages.append(LintMessage(match, se.MESSAGE_TYPE_ERROR, filename, True))
 
 					# Check for uppercase HTML tags
 					if regex.findall(r"<[A-Z]+", file_contents):
@@ -816,12 +816,12 @@ def lint(self, metadata_xhtml) -> list:
 							for match in matches:
 								messages.append(LintMessage(match, se.MESSAGE_TYPE_WARNING, filename, True))
 
-					# Check for IDs on <h#> tags
-					matches = regex.findall(r"<h[0-6][^>]*?id=[^>]*?>", file_contents, flags=regex.DOTALL)
-					if matches:
-						messages.append(LintMessage("<h#> tag with id attribute. <h#> tags should be wrapped in <section> tags, which should hold the id attribute.", se.MESSAGE_TYPE_WARNING, filename))
-						for match in matches:
-							messages.append(LintMessage(match, se.MESSAGE_TYPE_WARNING, filename, True))
+					# # Check for IDs on <h#> tags
+					# matches = regex.findall(r"<h[0-6][^>]*?id=[^>]*?>", file_contents, flags=regex.DOTALL)
+					# if matches:
+					# 	messages.append(LintMessage("<h#> tag with id attribute. <h#> tags should be wrapped in <section> tags, which should hold the id attribute.", se.MESSAGE_TYPE_WARNING, filename))
+					# 	for match in matches:
+					# 		messages.append(LintMessage(match, se.MESSAGE_TYPE_WARNING, filename, True))
 
 					# Check to see if <h#> tags are correctly titlecased
 					matches = regex.finditer(r"<h([0-6])([^>]*?)>(.*?)</h\1>", file_contents, flags=regex.DOTALL)
@@ -857,15 +857,15 @@ def lint(self, metadata_xhtml) -> list:
 									titlecased_title = titlecased_title.strip()
 
 									title = se.formatting.remove_tags(title).strip()
-									if title != titlecased_title:
-										messages.append(LintMessage("Title \"{}\" not correctly titlecased. Expected: {}".format(title, titlecased_title), se.MESSAGE_TYPE_WARNING, filename))
+									# if title != titlecased_title:
+									# 	messages.append(LintMessage("Title \"{}\" not correctly titlecased. Expected: {}".format(title, titlecased_title), se.MESSAGE_TYPE_WARNING, filename))
 
 							# No subtitle? Much more straightforward
 							else:
 								titlecased_title = se.formatting.remove_tags(se.formatting.titlecase(title))
 								title = se.formatting.remove_tags(title)
-								if title != titlecased_title:
-									messages.append(LintMessage("Title \"{}\" not correctly titlecased. Expected: {}".format(title, titlecased_title), se.MESSAGE_TYPE_WARNING, filename))
+								# if title != titlecased_title:
+								# 	messages.append(LintMessage("Title \"{}\" not correctly titlecased. Expected: {}".format(title, titlecased_title), se.MESSAGE_TYPE_WARNING, filename))
 
 					# Check for <figure> tags without id attributes
 					matches = regex.findall(r"<img[^>]*?id=\"[^>]+?>", file_contents)
