@@ -1019,7 +1019,7 @@ def _split_file_output_file(chapter_number: int, header_xhtml: str, chapter_xhtm
 	"""
 
 	with open("chapter-" + str(chapter_number) + ".xhtml", "w", encoding="utf-8") as file:
-		file.write(header_xhtml.replace("NUMBER", str(chapter_number)) + "\n" + chapter_xhtml + "\n</section></body></html>")
+		file.write(header_xhtml.replace("NUMBER", str(chapter_number)) + "\n" + chapter_xhtml + "\n</body></html>")
 		file.truncate()
 
 def split_file() -> int:
