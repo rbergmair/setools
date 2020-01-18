@@ -360,6 +360,7 @@ def build(self, metadata_xhtml: str, metadata_tree: se.easy_xml.EasyXmlTree, run
 
 		# Massage image references in content.opf
 		metadata_xhtml = metadata_xhtml.replace("cover.svg", "cover.jpg")
+		metadata_xhtml = metadata_xhtml.replace("cover.png", "cover.jpg")
 		metadata_xhtml = metadata_xhtml.replace(".svg", ".png")
 		metadata_xhtml = metadata_xhtml.replace("id=\"cover.jpg\" media-type=\"image/svg+xml\"", "id=\"cover.jpg\" media-type=\"image/jpeg\"")
 		metadata_xhtml = metadata_xhtml.replace("image/svg+xml", "image/png")
