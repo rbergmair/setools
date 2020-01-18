@@ -353,10 +353,10 @@ def build(self, metadata_xhtml: str, metadata_tree: se.easy_xml.EasyXmlTree, run
 				shutil.copy2(str(cover_png_file), str(work_directory / "cover-thumbnail.png"))
 			subprocess.run([str(convert_path), "-resize", "{}x{}".format(COVER_THUMBNAIL_WIDTH, COVER_THUMBNAIL_HEIGHT), "-quality", "100", "-format", "jpg", str(work_directory / "cover-thumbnail.png"), str(output_directory / "cover-thumbnail.jpg")])
 			(work_directory / "cover-thumbnail.png").unlink()
-			if os.path.isfile(cover_svg_file):
-				cover_svg_file.unlink()
-			elif os.path.isfile(cover_png_file):
-				cover_png_file.unlink()
+			# if os.path.isfile(cover_svg_file):
+			# 	cover_svg_file.unlink()
+			# elif os.path.isfile(cover_png_file):
+			# 	cover_png_file.unlink()
 
 		# Massage image references in content.opf
 		metadata_xhtml = metadata_xhtml.replace("cover.svg", "cover.jpg")
