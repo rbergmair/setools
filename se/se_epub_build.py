@@ -329,23 +329,34 @@ def build(self, metadata_xhtml: str, metadata_tree: se.easy_xml.EasyXmlTree, run
 		# to convert to svg -> png, then `convert` to convert png -> jpg.
 		# Path arguments must be cast to string for Windows compatibility.
 		cover_svg_file = work_epub_root_directory / "epub" / "images" / "cover.svg"
-		if not os.path.isfile(cover_svg_file):
+		cover_png_file = work_epub_root_directory / "epub" / "images" / "cover.png"
+
+		if os.path.isfile(cover_svg_file):
+			subprocess.run([str(rsvg_convert_path), "--keep-aspect-ratio", "--format", "png", "--output", str(work_directory / "cover.png"), str(cover_svg_file)])
+		elif os.path.isfile(cover_png_file):
+			shutil.copy2(str(cover_png_file), str(work_directory / "cover.png"))
+		else:
 			raise se.MissingDependencyException("Cover image is missing. Did you run build-images?")
 
-		subprocess.run([str(rsvg_convert_path), "--keep-aspect-ratio", "--format", "png", "--output", str(work_directory / "cover.png"), str(cover_svg_file)])
 		subprocess.run([str(convert_path), "-format", "jpg", str(work_directory / "cover.png"), str(work_epub_root_directory / "epub" / "images" / "cover.jpg")])
 		(work_directory / "cover.png").unlink()
 
 		if build_covers:
 			shutil.copy2(work_epub_root_directory / "epub" / "images" / "cover.jpg", output_directory / "cover.jpg")
-			shutil.copy2(cover_svg_file, output_directory / "cover-thumbnail.svg")
-			# Path arguments must be cast to string for Windows compatibility.
-			subprocess.run([str(rsvg_convert_path), "--keep-aspect-ratio", "--format", "png", "--output", str(work_directory / "cover-thumbnail.png"), str(output_directory / "cover-thumbnail.svg")])
+			if os.path.isfile(cover_svg_file):
+				shutil.copy2(cover_svg_file, output_directory / "cover-thumbnail.svg")
+				# Path arguments must be cast to string for Windows compatibility.
+				subprocess.run([str(rsvg_convert_path), "--keep-aspect-ratio", "--format", "png", "--output", str(work_directory / "cover-thumbnail.png"), str(output_directory / "cover-thumbnail.svg")])
+				(output_directory / "cover-thumbnail.svg").unlink()
+			elif os.path.isfile(cover_png_file):
+				shutil.copy2(str(cover_png_file), str(work_directory / "cover-thumbnail.png"))
 			subprocess.run([str(convert_path), "-resize", "{}x{}".format(COVER_THUMBNAIL_WIDTH, COVER_THUMBNAIL_HEIGHT), "-quality", "100", "-format", "jpg", str(work_directory / "cover-thumbnail.png"), str(output_directory / "cover-thumbnail.jpg")])
 			(work_directory / "cover-thumbnail.png").unlink()
-			(output_directory / "cover-thumbnail.svg").unlink()
 
-		cover_svg_file.unlink()
+		if os.path.isfile(cover_svg_file):
+			cover_svg_file.unlink()
+		elif os.path.isfile(cover_png_file):
+			cover_png_file.unlink()
 
 		# Massage image references in content.opf
 		metadata_xhtml = metadata_xhtml.replace("cover.svg", "cover.jpg")
