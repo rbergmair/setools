@@ -432,7 +432,8 @@ def build(self, metadata_xhtml: str, metadata_tree: se.easy_xml.EasyXmlTree, run
 					# Convert SVGs to PNGs at 2x resolution
 					# We use `rsvg-convert` instead of `inkscape` or `convert` because it gives us an easy way of zooming in at 2x
 					# Path arguments must be cast to string for Windows compatibility.
-					subprocess.run([str(rsvg_convert_path), "--zoom", "2", "--keep-aspect-ratio", "--format", "png", "--output", regex.sub(r"\.svg$", ".png", str(Path(root) / filename)), str(Path(root) / filename)])
+					# subprocess.run([str(rsvg_convert_path), "--zoom", "2", "--keep-aspect-ratio", "--format", "png", "--output", regex.sub(r"\.svg$", ".png", str(Path(root) / filename)), str(Path(root) / filename)])
+					subprocess.run([str(rsvg_convert_path), "--keep-aspect-ratio", "--format", "png", "--output", regex.sub(r"\.svg$", ".png", str(Path(root) / filename)), str(Path(root) / filename)])
 					(Path(root) / filename).unlink()
 
 				if filename.lower().endswith(".xhtml"):
